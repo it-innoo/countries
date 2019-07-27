@@ -27,7 +27,7 @@ const Country = ({ country }) => {
   )
 }
 
-const Countries = ({ countries }) => {
+const Countries = ({ countries, handleClick }) => {
   if (countries.length === 0) {
     return <div>
       No countries, specify another filter
@@ -50,6 +50,7 @@ const Countries = ({ countries }) => {
         countries.map(c =>
           <div key={c.alpha3Code}>
             {c.name}
+            <button onClick={() => handleClick(c.name)}>show</button>
           </div>
         )
       }
@@ -85,6 +86,7 @@ const App = () => {
       </div>
       <Countries
         countries={countriesToShow}
+        handleClick={(s) => setSearch(s)}
       />
     </div>
   )
