@@ -3,7 +3,40 @@ import ReactDOM from 'react-dom'
 import axios from 'axios'
 import './index.css';
 
+const Weather = ({ weather }) => {
+  if (weather === null) {
+    return null
+  }
+
+  return (
+    <div>
+      <div>
+        <strong>temperature:</strong> {weather.temp_c} &#8451;
+      </div>
+      <div>
+        <img
+          src={weather.condition.icon}
+          alt={weather.condition.text} />
+      </div>
+      <div>
+        <strong>wind:</strong> {weather.wind_kph} kph direction {weather.wind_dir}
+      </div>
+    </div>
+  )
+}
+
 const Country = ({ country }) => {
+  const [weather, setWeather] = useState(null)
+
+  useEffect(() => {
+    const url = `https://api.apixu.com/v1/current.json?key=d68ee55761624662b8870114191305&q=${country.capital}`
+    axios
+      .get(url)
+      .then(response => {
+        setWeather(response.data.current)
+      })
+  }, [country.capital])
+
   return (
     <div>
       <h2>{country.name}</h2>
@@ -23,6 +56,10 @@ const Country = ({ country }) => {
       <div>
         <img src={country.flag} alt='flag' height='100' />
       </div>
+
+      <h3>Weather in {country.capital}</h3>
+
+      <Weather weather={weather} />
     </div>
   )
 }
@@ -61,11 +98,11 @@ const Countries = ({ countries, handleClick }) => {
 const App = () => {
   const [countries, setCountries] = useState([])
   const [search, setSearch] = useState('swi')
-  const endpoint = 'https://restcountries.eu/rest/v2/all'
 
   useEffect(() => {
+    const url = 'https://restcountries.eu/rest/v2/all'
     axios
-      .get(endpoint)
+      .get(url)
       .then(response => {
         setCountries(response.data)
       })
